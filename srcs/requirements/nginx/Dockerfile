@@ -1,15 +1,25 @@
-FROM	debian:bullseye
+#OS
+FROM    debian:bullseye
 
-RUN 	apk update && apk upgrade && apk add \
-RUN		apt-get -y install nginx
+#update & install applications
+RUN     apt-get update -y && apt-get upgrade -y
+RUN     apt-get install -y nginx \
+        openssl
 
-RUN		rm -f /etc/nginx/nginx.conf
+#SSL/TLS config
+RUN     mkdir -p /etc/nginx/ssl
+COPY    /conf/nginx.conf /etc/nginx/nginx.conf
 
-COPY	/conf/nginx.conf /etc/nginx/nginx.conf
-COPY	scripts/setup_nginx.sh /setup_nginx.sh
+RUN     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout /etc/nginx/ssl/nginx.key \
+        -out /etc/nginx/ssl/nginx.crt \
+        -subj "/C=FR/ST=IDF/L=Paris/O=42/CN=jewu.42.fr/UID=jewu";
 
-RUN		chmod -R +x /setup_nginx.sh
+RUN     chmod 755 /var/www/html
+RUN     chown -R www-data:www-data /var/www/html
 
-EXPOSE	443
+#listening to port
+EXPOSE  443
 
-ENTRYPOINT ["nginx", "-g", "daemon off"]
+#launch nginx
+CMD  ["nginx", "-g", "daemon off;"]
