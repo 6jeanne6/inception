@@ -1,0 +1,7 @@
+service:
+  nginx:
+    image:
+  mariadb:
+    image:
+  wordpress:
+    image:
