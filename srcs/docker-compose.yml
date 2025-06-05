@@ -1,7 +1,82 @@
-service:
+services:
   nginx:
-    image:
+    container_name: nginx
+    image: nginx:latest
+    hostname: nginx
+    depends_on:
+      - wordpress
+    build:
+      context: requirements/nginx
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - inception
+    restart: on-failure
+
   mariadb:
-    image:
+    container_name: mariadb
+    image: mariadb:latest
+    networks: #which network does it belong
+      - inception
+    build:
+      context: requirements/mariadb
+      dockerfile: Dockerfile
+    env_file: .env #file for variables
+    # environment:
+    #   MYSQL_DATABASE: wordpress
+    #   MYSQL_USER: jewu
+    #   MYSQL_PASSWORD: 4242
+    #   MYSQL_ROOT_PASSWORD: helloworld
+    volumes:
+      - mariadb:/var/lib/mysql
+    restart: unless-stopped #restart if not stopped
+    expose:
+      - "3306"
+
   wordpress:
-    image:
+    container_name: wordpress
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    depends_on:
+      - mariadb
+    build:
+      context: requirements/wordpress
+      dockerfile: Dockerfile
+    env_file: .env
+    # environment:
+    #   WP_HOST: mariadb
+    #   WP_USER: user
+    #   WP_PASSWORD: passwordwp
+    #   WP_NAME: database1
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - inception
+    restart: on-failure
+    expose:
+      - "9000"
+
+
+volumes:
+  wordpress:
+    driver: local #local storage of volume
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/jewu/data/wordpress' #where it will be stored locally
+  
+  mariadb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind' #bind mounting = volumes mounting on access path to host and can be modified by other processes outisde of Docker 
+      device: '/home/jewu/data/mysql'
+
+networks:
+  inception:
+    driver: bridge #install rules that allow the 3 containers to communicate in bridge
