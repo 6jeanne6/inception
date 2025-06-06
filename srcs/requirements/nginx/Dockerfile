@@ -1,9 +1,10 @@
 #OS
-FROM    debian:bullseye
+FROM    debian:bullseye-slim
 
 #update & install applications
-RUN     apt-get update -y && apt-get upgrade -y
-RUN     apt-get install -y nginx \
+# RUN     apt-get update -y && apt-get upgrade -y \
+RUN     apt-get update -y && \
+        apt-get install -y nginx \
         openssl
 
 #SSL/TLS config

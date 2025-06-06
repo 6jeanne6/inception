@@ -1,27 +1,24 @@
 services:
   nginx:
     container_name: nginx
-    image: nginx:latest
-    hostname: nginx
-    depends_on:
-      - wordpress
     build:
       context: requirements/nginx
       dockerfile: Dockerfile
+    hostname: nginx
     env_file: .env
     ports:
       - "443:443"
+    restart: on-failure
     volumes:
       - wordpress:/var/www/html
+  #verif si depend_on utile
+    depends_on:
+      - wordpress
     networks:
       - inception
-    restart: on-failure
-
+ 
   mariadb:
     container_name: mariadb
-    image: mariadb:latest
-    networks: #which network does it belong
-      - inception
     build:
       context: requirements/mariadb
       dockerfile: Dockerfile
@@ -33,20 +30,21 @@ services:
     #   MYSQL_ROOT_PASSWORD: helloworld
     volumes:
       - mariadb:/var/lib/mysql
+    networks: #which network does it belong
+      - inception
     restart: unless-stopped #restart if not stopped
-    expose:
-      - "3306"
+    # expose:
+    #   - "3306"
 
   wordpress:
     container_name: wordpress
-    image: wordpress:latest
-    ports:
-      - "8000:80"
-    depends_on:
-      - mariadb
     build:
       context: requirements/wordpress
       dockerfile: Dockerfile
+    # ports:
+    #   - "8000:80"
+    depends_on:
+      - mariadb
     env_file: .env
     # environment:
     #   WP_HOST: mariadb
