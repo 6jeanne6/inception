@@ -1,15 +1,12 @@
-FROM    debian:bullseye-slim
+FROM debian:bullseye-slim
 
-RUN     apt-get update -y && \
-        # apt-get upgrade -y && \
-        apt-get install -y mariadb-server
+RUN apt-get update && apt-get install -y mariadb-server tini
 
-COPY    conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+EXPOSE 3306
 
-COPY    ./conf/mariadb.sh .
+COPY ./conf/mariadb.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/mariadb.sh
 
-RUN     chmod +x /mariadb.sh
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/mariadb.sh"]
 
-EXPOSE  3306
-
-ENTRYPOINT ["./mariadb.sh"]
+CMD ["mysqld", "--bind-address=0.0.0.0"]

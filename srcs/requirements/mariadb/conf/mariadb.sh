@@ -1,40 +1,32 @@
-#!/bin/bash
+#!/bin/sh
 
-#start MariaDB service
-# echo -e "\e[33m🚀 Launching mysqld_safe\e[0m"
-# /usr/bin/mysqld_safe &
+/etc/init.d/mariadb start;
 
-if [ -d "/var/lib/mysql/$MYSQL_DATABASE" ]; then
-    echo "Database already exists"
+DB_ALREADY_EXISTS=$(mysql -uroot -p$SQL_ROOT_PASSWORD -e "SHOW DATABASES" | grep $SQL_DATABASE | wc -l);
+
+if [ $DB_ALREADY_EXISTS -eq 1 ]; then
+	echo "Database already exists";
 else
-    #create database and user
-    echo -e "\e[33m📊 Database is being created\e[0m"
-    /usr/bin/mysqld_safe &
-    
-    #wait that MariaDB is ready
-    until mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" ping --silent; do
-        sleep 1
-    done
+	echo "Database does not exist";
+	mysql_secure_installation << END
+Y
+$SQL_ROOT_PASSWORD
+$SQL_ROOT_PASSWORD
+Y
+Y
+Y
+Y
+END
 
-    mysql -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
-    mysql -e "CREATE USER IF NOT EXISTS \`${MYSQL_USER}\`@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-    mysql -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO \`${MYSQL_USER}\`@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-    mysql -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO \`${MYSQL_USER}\`@'%';"
-    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
-    mysql -e "FLUSH PRIVILEGES;"
 
-    # mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
-    # mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-    # mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';"
-    # mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
-    # mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "FLUSH PRIVILEGES;"
+mysql -uroot -p$SQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $SQL_DATABASE;"
 
-    #stop the service
-    mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" shutdown
+mysql -uroot -p$SQL_ROOT_PASSWORD -e "CREATE USER '$SQL_USER'@'%' IDENTIFIED BY '$SQL_PASSWORD'; GRANT ALL PRIVILEGES ON $SQL_DATABASE.* TO '$SQL_USER'@'%'; FLUSH PRIVILEGES;";
+
 fi
 
-sleep 5
+sleep 1;
 
-#launch safe mode MariaDB
-echo -e "\e[33mRelaunching MariaDB\e[0m"
-exec mysqld_safe
+/etc/init.d/mariadb stop;
+
+exec "$@";

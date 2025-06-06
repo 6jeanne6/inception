@@ -1,16 +1,16 @@
 services:
   nginx:
     container_name: nginx
+    # hostname: jewu.42.fr
     build:
       context: requirements/nginx
       dockerfile: Dockerfile
-    hostname: nginx
     env_file: .env
     ports:
       - "443:443"
     restart: on-failure
     volumes:
-      - wordpress:/var/www/html
+      - wordpress:/var/www/wordpress
   #verif si depend_on utile
     depends_on:
       - wordpress
@@ -52,12 +52,10 @@ services:
     #   WP_PASSWORD: passwordwp
     #   WP_NAME: database1
     volumes:
-      - wordpress:/var/www/html
+      - wordpress:/var/www/wordpress
     networks:
       - inception
     restart: on-failure
-    expose:
-      - "9000"
 
 
 volumes:

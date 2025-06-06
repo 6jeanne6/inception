@@ -10,10 +10,10 @@ else
     echo "WordPress configuration ongoing..."
     wp config create \
         --path=/var/www/wordpress \
-        --dbname="$WP_NAME" \
-        --dbuser="$WP_USER" \
-        --dbpass="$WP_PASSWORD" \
-        --dbhost="$WP_HOST" \
+        --dbname=$WP_NAME \
+        --dbuser=$WP_USER \
+        --dbpass=$WP_PASSWORD \
+        --dbhost=$WP_HOST \
         --dbprefix="wp_" \
         --allow-root
 
