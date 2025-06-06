@@ -17,8 +17,6 @@ else
         --dbprefix="wp_" \
         --allow-root
 
-    echo -e "\e[32mwp-config.php is created\e[0m"
-
 fi
 
 exec /usr/sbin/php-fpm7.4 -F #-F to execute php
