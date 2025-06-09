@@ -11,7 +11,7 @@
 #                                 	Alias                                      #
 ################################################################################
 
-DOCKER_COMPOSE_FILE = /srcs/docker-compose.yml
+DOCKER_COMPOSE_FILE = srcs/docker-compose.yml
 
 ################################################################################
 #                                   Colors                                     #
