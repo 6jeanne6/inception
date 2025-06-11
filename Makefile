@@ -36,11 +36,14 @@ all: up
 #-d = detached, run containers in the background
 #--build = build images before starting containers
 up:
+		mkdir -p /home/jewu/data/wordpress
+		mkdir -p /home/jewu/data/mariadb
 		@docker compose -f $(DOCKER_COMPOSE_FILE) up -d --build
 
 #stop containers and removes containers, networks, volumes
 #and images created by up
 down:
+
 		@docker compose -f $(DOCKER_COMPOSE_FILE) down
 
 #stop running containers without removing them, can be started
@@ -50,6 +53,8 @@ stop:
 
 #remove all stopped containers
 clean:	down
+		sudo rm -rf /home/jewu/data/wordpress
+		sudo rm -rf /home/jewu/data/mariadb
 		@docker container prune --force
 
 #remove all unused containers, networks, images(dangling and unused)
