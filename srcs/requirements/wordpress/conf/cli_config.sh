@@ -17,6 +17,26 @@ else
         --dbprefix="wp_" \
         --allow-root
 
+    wp core install \
+        --path=/var/www/wordpress \
+        --url=$WEBSITE_URL\
+        --title="$WEBSITE_TITLE" \
+        --admin_name=$ADMIN_NAME \
+        --admin_password=$ADMIN_PASSWORD \
+        --admin_email=$ADMIN_EMAIL \
+        --skip-email \
+        --allow-root
+
+    wp user create \
+        --path=/var/www/wordpress \
+        --user_name=$USER_NAME \
+        --user_password=$USER_PASSWORD \
+        --user_email=$USER_EMAIL \
+        --role=author \
+        --skip-email \
+        --allow-root
+
+
 fi
 
 exec /usr/sbin/php-fpm7.4 -F #-F to execute php
