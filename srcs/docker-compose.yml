@@ -1,3 +1,5 @@
+#Docker Compose links and launches containers together with their set of parameters (networks, volumes, etc)
+
 services:
   nginx:
     container_name: nginx

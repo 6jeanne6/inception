@@ -35,10 +35,14 @@ all: up
 #build, recreate, start and attach to container for a service
 #-d = detached, run containers in the background
 #--build = build images before starting containers
-up:
+build:
 		mkdir -p /home/jewu/data/wordpress
 		mkdir -p /home/jewu/data/mariadb
-		@docker compose -f $(DOCKER_COMPOSE_FILE) up -d --build
+		@docker compose -f $(DOCKER_COMPOSE_FILE) --build
+
+#up = launch containers without having to build
+up:
+		@docker compose -f $(DOCKER_COMPOSE_FILE) up -d
 
 #stop containers and removes containers, networks, volumes
 #and images created by up
@@ -64,4 +68,4 @@ vclean:	clean
 
 re:		vclean all
 
-.PHONY: all up down stop clean vclean re
+.PHONY: all build up down stop clean vclean re

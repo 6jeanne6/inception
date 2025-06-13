@@ -9,8 +9,10 @@ RUN     apt-get install -y  php7.4\
 
 RUN     wget https://fr.wordpress.org/wordpress-6.8-fr_FR.tar.gz -P /var/www
 
+#download WordPress in /var/www
 RUN     cd /var/www && tar -xzf wordpress-6.8-fr_FR.tar.gz && rm wordpress-6.8-fr_FR.tar.gz
 
+#give root ownership to the Wordpress directory
 RUN     chown -R root:root /var/www/wordpress
 
 #CLI = command line interface, text-based interface with commands to input to interact with the OS
@@ -24,6 +26,8 @@ COPY    ./conf/www.conf /etc/php/7.4/fpm/pool.d
 #enable php and cli script
 COPY    ./conf/cli_config.sh .
 RUN     chmod +x cli_config.sh
+
+#stock php-fpm socket
 RUN     mkdir /var/run/php
 
 EXPOSE  9000

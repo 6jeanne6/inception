@@ -8,6 +8,8 @@ then
 
 else
     echo "WordPress configuration ongoing..."
+
+    #generate wp-config.php file to configure database
     wp config create \
         --path=/var/www/wordpress \
         --dbname=$WP_NAME \
@@ -17,6 +19,7 @@ else
         --dbprefix="wp_" \
         --allow-root
 
+    # Configure website with name, admin
     wp core install \
         --path=/var/www/wordpress \
         --url=$WEBSITE_URL\
@@ -27,6 +30,7 @@ else
         --skip-email \
         --allow-root
 
+    # Create an user
     wp user create \
         --path=/var/www/wordpress \
         --user_name=$USER_NAME \
@@ -36,7 +40,7 @@ else
         --skip-email \
         --allow-root
 
-
 fi
 
+#send php scripts to PHP-FPM via FastCGI
 exec /usr/sbin/php-fpm7.4 -F #-F to execute php
