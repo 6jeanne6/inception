@@ -30,7 +30,7 @@ RESET 	= \033[0m
 #                                    Rules                                     #
 ################################################################################
 
-all: up
+all: build up
 
 #build, recreate, start and attach to container for a service
 #-d = detached, run containers in the background
@@ -38,7 +38,7 @@ all: up
 build:
 		mkdir -p /home/jewu/data/wordpress
 		mkdir -p /home/jewu/data/mariadb
-		@docker compose -f $(DOCKER_COMPOSE_FILE) --build
+		@docker compose -f $(DOCKER_COMPOSE_FILE) build
 
 #up = launch containers without having to build
 up:
