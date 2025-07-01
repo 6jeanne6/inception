@@ -2,7 +2,7 @@
 
 # 📖 Description
 
-Setting up a website by using Docker containers to enable Nginx, MariaDB and Wordpress.
+Setting up a website by using Docker containers to enable Nginx, MariaDB and Wordpress services.
 
 # ⚙️ Installation
 
